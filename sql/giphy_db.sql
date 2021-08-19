@@ -1,28 +1,30 @@
 -- initial data gathering and staging
-create table stage_giphy_db (
-	gif_url varchar (255) , 
-	slug varchar (255)
+CREATE TABLE stage_giphy_db (
+	gif_url VARCHAR (255) , 
+	slug VARCHAR (255),
+	gif_id VARCHAR (255)
 );
 
 -- main db giphy 
-create table giphy_db (
-	gif_url varchar (255) primary key, 
-	slug varchar (255)
+CREATE TABLE giphy_db (
+	gif_id VARCHAR (255) PRIMARY KEY, 
+	slug VARCHAR (255),
+	gif_url VARCHAR (255)
 );
 
 
---filter on cats
-select distinct(slug), gif_url from stage_giphy_db
-where slug like '%cat%'
-
---filter on dogs
-select slug, gif_url from stage_giphy_db
-where slug like '%dog%'
+--filter on cats and dogs
+SELECT DISTINCT(gif_id), gif_url, slug FROM stage_giphy_db
+WHERE slug LIKE '%cat%' 
+	OR slug LIKE '%dog';
 
 
--- handle the duplicates from staging area to final cat_db  
+-- handle the duplicates from staging area to final giphy_db  
 INSERT INTO giphy_db 
-SELECT DISTINCT * FROM stage_giphy_db
-ON CONFLICT (gif_url) DO UPDATE SET
+SELECT DISTINCT(gif_id), gif_url, slug FROM stage_giphy_db
+WHERE slug LIKE '%cat%' OR slug LIKE '%dog'
+ON CONFLICT (gif_id) DO UPDATE SET
 	slug = EXCLUDED.slug,
+	gif_url = EXCLUDED.gif_url
+;
 	

@@ -1,45 +1,41 @@
 -- initial data gathering and staging
-create table stage_cat_db (
-	id int , 
-	species varchar(4),
-	age varchar(10), 
-	gender varchar(6),
-	animal_id int,
-	city varchar
+CREATE TABLE stage_cat_db (
+	id INT , 
+	species VARCHAR(4),
+	age VARCHAR(10), 
+	gender VARCHAR(6),
+	animal_id INT,
+	city VARCHAR
 );
 
-create table stage_dog_db (
-	id int , 
-	species varchar(4),
-	age varchar(10), 
-	gender varchar(6),
-	animal_id int,
-	city varchar
+CREATE TABLE stage_dog_db (
+	id INT , 
+	species VARCHAR(4),
+	age VARCHAR(10), 
+	gender VARCHAR(6),
+	animal_id INT,
+	city VARCHAR
 );
-
-
-select * from stage_cat_db;
-
 
 -- create cat_db (petfinder api)
-create table cat_db (
-	id int primary key, 
-	species varchar(4),
-	age varchar(10), 
-	gender varchar(6),
-	animal_id int,
-	city varchar
+CREATE TABLE cat_db (
+	id INT PRIMARY KEY, 
+	species VARCHAR(4),
+	age VARCHAR(10), 
+	gender VARCHAR(6),
+	animal_id INT,
+	city VARCHAR
 );
 
 
 -- create dog_db (petfinder api)
-create table dog_db (
-	id int primary key, 
-	species varchar(4),
-	age varchar(10), 
-	gender varchar(6),
-	animal_id int,
-	city varchar
+CREATE TABLE dog_db (
+	id INT PRIMARY KEY, 
+	species VARCHAR(4),
+	age VARCHAR(10), 
+	gender VARCHAR(6),
+	animal_id INT,
+	city VARCHAR
 );
 
 -- handle the duplicates from staging area to final cat_db  
