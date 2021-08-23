@@ -1,7 +1,7 @@
 #dependency
 import os 
 import json
-import petpy
+# import petpy
 import urllib
 import time
 import pandas as pd
