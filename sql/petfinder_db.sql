@@ -114,13 +114,13 @@ GROUP BY CAST(date_published AS date), species, search_type
 ORDER BY CAST(date_published AS date)
 
 
---giphy db
-select * from stage_cat_giphy_db
-select * from stage_dog_giphy_db
-select * from dog_giphy_db
-select * from cat_giphy_db
---petfinder db
-select * from stage_cat_db
-select * from stage_dog_db
-select * from dog_post_db
-select * from cat_post_db
+-- --giphy db
+-- select * from stage_cat_giphy_db
+-- select * from stage_dog_giphy_db
+-- select * from dog_giphy_db
+-- select * from cat_giphy_db
+-- --petfinder db
+-- select * from stage_cat_db
+-- select * from stage_dog_db
+-- select * from dog_post_db
+-- select * from cat_post_db

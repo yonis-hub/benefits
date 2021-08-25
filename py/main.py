@@ -1,12 +1,13 @@
 #dependency
 import os 
 import json
-# import petpy
+import petpy
 import urllib
 import time
 import pandas as pd
 from datetime import datetime
 import matplotlib.pyplot as plt
+from matplotlib import rcParams
 
 
 # Python SQL toolkit and Object Relational Mapper
@@ -221,25 +222,15 @@ def getDailyStats():
     SELECT CAST(CAST(date_published AS date) AS varchar) AS trending_post_date, COUNT(species), species, search_type FROM 
 (
     SELECT species, date_published, 'adoption' as search_type 
-    FROM cat_post_db
-    WHERE date_published >= '2021-01-01' AND date_published < '2021/04/18'
-    UNION
-	
-    SELECT species, date_published, 'adoption' as search_type 
-    FROM dog_post_db
-    WHERE date_published >= '2021-01-01' AND date_published < '2021/04/18'
-	
+    FROM pet_adoption_db
+    WHERE date_published >= '2021-04-01' AND date_published < '2021/04/08'
+    
 	UNION
 	
 	SELECT species , trending_datetime as date_published, 'giphy' as search_type
-    FROM dog_giphy_db
-    WHERE trending_datetime >= '2021-01-01' AND trending_datetime < '2021/04/18'
-	
-	UNION
-	
-	SELECT species , trending_datetime as date_published, 'giphy' as search_type
-    FROM cat_giphy_db
-    WHERE trending_datetime >= '2021-01-01' AND trending_datetime < '2021/04/18'
+    FROM pet_trending_db
+    WHERE trending_datetime >= '2021-04-01' AND trending_datetime < '2021/04/08'
+
 ) AS sub
 GROUP BY CAST(date_published AS date), species, search_type
 ORDER BY CAST(date_published AS date)
@@ -252,7 +243,7 @@ ORDER BY CAST(date_published AS date)
 def outputStats():
 
    #list of data ranges 
-    lst_dt = pd.date_range(start="2021-01-01",end="2021/04/18")
+    lst_dt = pd.date_range(start="2021-04-01",end="2021/04/08")
 
     date_list = []
     cat_post_list = []
@@ -308,30 +299,57 @@ def outputStats():
 
     #save to csv file or anyother types
     daily_stats_df.to_csv('stats_output.csv')
+
+    return daily_stats_df
     
 
+def makeGraph():
     
+    results = "./test_stats_output.csv"
+    data = pd.read_csv(results)
 
+    labels = data['date']
+
+    cat_adoption =data['cat_adoption']
+
+    dog_adoption = data['dog_adoption']
+
+    cat_post = data['cat_post']
+
+    dog_post = data['dog_post']
+
+    rcParams['figure.figsize'] = 15,8
+
+    plt.plot(labels, cat_adoption, color='salmon')
+
+    plt.plot(labels, dog_adoption, color='skyblue')
+
+    plt.bar(labels, dog_post, color='blue' )
+
+    plt.bar(labels, cat_post, bottom= dog_post, color='red' )
+
+    plt.legend(["Cat Adoption", "Dog Adoption", "Cat Post", "Dog Post"])
+    plt.title("Giphy Daily Trending Dog + Cat Posts & Daily Trending Cat + Dog Adopptions")
+    # plt.grid()
+    plt.show()
 
 
 
 #param control
+collectGiphy('http://api.giphy.com/v1/gifs/search?', 'cat', '100', 'g', 'en', 'stage_cat_giphy_db', 'cat_giphy_db', "'Cat'")
+collectGiphy('http://api.giphy.com/v1/gifs/search?', 'dog', '100', 'g', 'en', 'stage_dog_giphy_db', 'dog_giphy_db', "'Dog'")
 
-collectGiphy('http://api.giphy.com/v1/gifs/search?', 'cat', '300', 'g', 'en', 'stage_cat_giphy_db', 'cat_giphy_db', "'Cat'")
-collectGiphy('http://api.giphy.com/v1/gifs/search?', 'dog', '300', 'g', 'en', 'stage_dog_giphy_db', 'dog_giphy_db', "'Dog'")
-
-dogDf = petfinderAPI('2021-01-01', '2021-04-18', 'dog', '50', 1, 20)
-catDf = petfinderAPI('2021-01-01', '2021-04-18', 'cat', '50', 1, 20)
+dogDf = petfinderAPI('2021-01-01', '2021-08-24', 'dog', '50', 1, 20)
+catDf = petfinderAPI('2021-01-01', '2021-08-24', 'cat', '50', 1, 20)
 sendToAnimalStage(catDf, 'stage_cat_db')
 sendToAnimalStage(dogDf, 'stage_dog_db')
 updateAdopt('stage_dog_db', 'dog_post_db')
 updateAdopt('stage_cat_db', 'cat_post_db')
 
-#stats
+#stats and graph
 getDailyStats()
-
 outputStats()
-
+makeGraph()
 
 
 
